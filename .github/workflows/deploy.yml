@@ -2,12 +2,14 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ master ]  # 你的仓库默认分支是master，不是main
-  workflow_dispatch:    # 新增：允许手动点击触发部署（测试用）
+    branches: [ master ]
+  workflow_dispatch:
 
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write  # ✅ 新增这两行，授予写入权限
     steps:
       - uses: actions/checkout@v4
       
@@ -15,7 +17,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          cache: 'npm'  # 新增：缓存依赖，大幅加快后续部署速度
+          cache: 'npm'
           
       - name: Install dependencies
         run: npm ci
@@ -27,5 +29,5 @@ jobs:
         uses: peaceiris/actions-gh-pages@v4
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist  # Vite 构建产物目录，正确
-          publish_branch: gh-pages  # 明确指定发布分支，避免默认值问题
+          publish_dir: ./dist
+          publish_branch: gh-pages
